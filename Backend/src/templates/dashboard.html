@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NHP Banking Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f7f9;
+        }
+
+        h2, h3 {
+            text-align: center;
+        }
+
+        .add-account {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .add-account a {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-account a:hover {
+            background-color: #218838;
+        }
+
+        .account-summary {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .nav-item {
+            background-color: #0077cc;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 18px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-item:hover {
+            background-color: #005fa3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #f1f9ff;
+        }
+
+        tr {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>NHP Banking Dashboard</h2>
+
+
+    <div class="account-summary">
+        <h2>Welcome, {{ session['username'] }}!</h2>
+
+        <h3>Account Summary</h3>
+        <table>
+            <tr>
+                <th>#</th>
+                <th>Account Number</th>
+                <th>Account Type</th>
+                <th>Current Balance</th>
+            </tr>
+            {% for account in accounts %}
+            <tr onclick="window.location.href='{{ url_for('account_details', account_id=account.account_id) }}'">
+                <td style="visibility:hidden">{{account.account_id}}</td>
+                <td>{{ account.account_number }}</td>
+                <td>{{ account.account_type }}</td>
+                <td>₹{{ "{:,.2f}".format(account.balance) }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="add-account">
+
+        <a href="{{ url_for('add_account') }}">+ Add New Account</a>
+    </div>
+
+
+    <div class="nav-menu">
+        <a href="/dashboard/deposit" class="nav-item">Deposit</a>
+        <a href="/dashboard/withdraw" class="nav-item">Withdraw</a>
+        <a href="#" class="nav-item">Transfer</a>
+        <a href="#" class="nav-item">Bill Payments & Recharges</a>
+        <a href="#" class="nav-item">Loans & Credit Cards</a>
+        <a href="#" class="nav-item">Fixed Deposits & Investments</a>
+        <a href="/pfmanage" class="nav-item">Manage Profile & Security</a>
+        <a href="/" class="nav-item">Logout</a>
+        <a href="{{ url_for('account_summary') }}" class="nav-item">Standalone Account Summary</a>
+    </div>
+
+</body>
+</html>
+

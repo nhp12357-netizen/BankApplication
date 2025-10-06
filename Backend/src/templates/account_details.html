@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f7f9;
+        }
+
+        .details-container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2, h3 {
+            text-align: center;
+        }
+
+        .info {
+            font-size: 18px;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #0077cc;
+            color: white;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            background: #0077cc;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            background: #005fa3;
+        }
+
+        .btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="details-container">
+         <h2>{{ account.account_type }} Account</h2>
+        
+        <div style="visibility: hidden;"> {{ account.account_id }}</div>
+        <div class="info"><strong>Account Number:</strong> {{ account.account_number }}</div>
+       
+        <div class="info"><strong>Current Balance:</strong> ₹{{ "{:,.2f}".format(account.balance) }}</div>
+
+        <h3>Transaction History</h3>
+        {% if transactions %}
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Description</th>
+                </tr>
+                {% for txn in transactions %}
+                <tr>
+                    <td>{{ txn.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ txn.transaction_type }}</td>
+                    <td>₹{{ "{:,.2f}".format(txn.amount) }}</td>
+                    <td>{{ txn.description or '-' }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p style="text-align:center;">No transactions found for this account.</p>
+        {% endif %}
+
+        <div class="btn-container">
+            <a href="{{ url_for('dashboard') }}" class="btn">← Back to Dashboard</a>
+        </div>
+    </div>
+
+</body>
+</html>
