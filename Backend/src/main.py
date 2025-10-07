@@ -206,6 +206,75 @@ def api_withdraw():
 
     return {"message": "Withdraw successful"}
 
+@app.route('/api/transfer', methods=['POST'])
+def transfer_funds():
+    if 'username' not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data = request.get_json()
+
+    from_account_number = data.get('from_account')
+    to_account_number = data.get('to_account')
+    amount = Decimal(data.get('amount'))
+
+    if not from_account_number or not to_account_number or not amount:
+        return jsonify({"error": "Missing required fields"}), 400
+
+    if amount <= 0:
+        return jsonify({"error": "Transfer amount must be greater than zero"}), 400
+
+    from_account = Account.query.filter_by(account_number=from_account_number).first()
+    to_account = Account.query.filter_by(account_number=to_account_number).first()
+
+    if not from_account or not to_account:
+        return jsonify({"error": "One or both accounts not found"}), 404
+
+    user = User.query.filter_by(username=session['username']).first()
+    if from_account.user_id != user.user_id:
+        return jsonify({"error": "You can only transfer from your own account"}), 403
+
+    if from_account.balance < amount:
+        return jsonify({"error": "Insufficient funds"}), 400
+
+    try:
+        from_account.balance -= amount
+        to_account.balance += amount
+
+        txn_out = Transaction(
+            account_id=from_account.account_id,
+            transaction_type='Transfer Out',
+            amount=amount,
+            balance=from_account.balance,
+            description=f'Transfer to {to_account.account_number}'
+        )
+        txn_in = Transaction(
+            account_id=to_account.account_id,
+            transaction_type='Transfer In',
+            amount=amount,
+            balance=to_account.balance,
+            description=f'Transfer from {from_account.account_number}'
+        )
+
+        db.session.add_all([txn_out, txn_in])
+        db.session.commit()
+
+        return jsonify({
+            "message": "Transfer successful",
+            "from_account": {
+                "account_number": from_account.account_number,
+                "balance": float(from_account.balance)
+            },
+            "to_account": {
+                "account_number": to_account.account_number,
+                "balance": float(to_account.balance)
+            }
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route('/api/add_account', methods=['POST'])
 def api_add_account():
     data = request.get_json()  

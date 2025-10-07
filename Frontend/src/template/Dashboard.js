@@ -107,7 +107,7 @@ function Dashboard() {
         <div style={navItemStyle} onClick={() => navigate("/investments")}>Fixed Deposits & Investments</div>
         <div style={navItemStyle} onClick={() => navigate("/pfmanage")}>Manage Profile & Security</div>
         <div style={navItemStyle} onClick={() => navigate("/")}>Logout</div>
-        <div style={navItemStyle} onClick={() => navigate("/account_summary")}>Standalone Account Summary</div>
+
       </div>
     </div>
   );

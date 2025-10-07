@@ -7,6 +7,7 @@ import AddAccount from "./AddAccount";
 import AccountDetails from "./AccountDetails";
 import ManageProfile from "./ManageProfile";
 import Loan from "./Loan";
+import Transfer from "./Transfer";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/account/:accountId" element={<AccountDetails />} />
         <Route path="/manageprofile" element={<ManageProfile />} />
         <Route path="/loan" element={<Loan />} />
+        <Route path="/transfer" element={<Transfer />} />
       </Routes>
     </BrowserRouter>
   );
